@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.function.Function;
 
 @Mixin(BakedModelManager.class)
-public class GrassBlockMixin {
+public class GrassBlockModelManagerMixin {
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
     public void getModel(ModelIdentifier id, CallbackInfoReturnable<BakedModel> cir) {
         System.out.println("Requested model: " + id.toString());
