@@ -8,6 +8,7 @@ import net.minecraft.client.render.model.Baker;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +38,10 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
     @Nullable
     @Override
     public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-        SpriteIdentifier spriteIdentifier = new SpriteIdentifier(new Identifier("minecraft", "textures/atlas/blocks.png"), new Identifier("bluegrass", "block/grass_block_side"));
+        SpriteIdentifier spriteIdentifier = new SpriteIdentifier(
+                new Identifier("minecraft", "textures/atlas/blocks.png"),
+                new Identifier("bluegrass", "block/grass_block_side")
+        );
         Sprite sprite = textureGetter.apply(spriteIdentifier);
         return new BakedBlueGrassModel(sprite);
     }

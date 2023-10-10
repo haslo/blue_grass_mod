@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 public class BakedBlueGrassModel implements BakedModel {
     private final Sprite sprite;
@@ -43,9 +42,9 @@ public class BakedBlueGrassModel implements BakedModel {
             return Collections.emptyList();
         }
         List<BakedQuad> quads = new ArrayList<>(originalModel.getQuads(state, face, random));
-        if (!quads.isEmpty()) {
-            System.out.println("Original vertex data length: " + quads.get(0).getVertexData().length);
-        }
+        // if (!quads.isEmpty()) {
+        //     System.out.println("Original vertex data length: " + quads.get(0).getVertexData().length);
+        // }
         if (face == null || face == Direction.DOWN) {
             return originalModel.getQuads(state, face, random);
         }
@@ -62,7 +61,7 @@ public class BakedBlueGrassModel implements BakedModel {
                     blue = Math.min(255, blue * 2);  // Multiply blue component by 2, capped at 255
                     int newColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
                     vertexData[i + 3] = newColor;
-                    System.out.println("Blue tint applied to " + i);
+                    // System.out.println("Blue tint applied to " + i);
                 }
                 BakedQuad newQuad = new BakedQuad(vertexData, -1, quad.getFace(), quad.getSprite(), quad.hasShade());
                 newQuads.add(newQuad);
@@ -81,17 +80,12 @@ public class BakedBlueGrassModel implements BakedModel {
             quads.clear();
             quads.add(customQuad);
         }
-        // south, noop
-        if (quads.isEmpty()) {
-            System.out.println("No quads generated for " + face);
-        } else {
-            System.out.println("Quads generated for " + face);
-        }
         if (quads.isEmpty()) {
             System.out.println("Custom vertex data is empty");
-        } else {
-            System.out.println("Custom vertex data length: " + quads.get(0).getVertexData().length);
         }
+        // else {
+        //     System.out.println("Custom vertex data length: " + quads.get(0).getVertexData().length);
+        // }
         return quads;
     }
 
