@@ -14,15 +14,15 @@ import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class BlueGrassSideModel implements BakedModel {
+public class BakedBlueGrassModel implements BakedModel {
     private final Sprite sprite;
 
-    public BlueGrassSideModel(Function<Identifier, Sprite> spriteGetter) {
-        Identifier identifier = new Identifier("bluegrass", "block/grass_block_side");
-        this.sprite = spriteGetter.apply(identifier);
+    public BakedBlueGrassModel(Sprite sprite) {
+        this.sprite = sprite;
         if (this.sprite == null) {
             System.out.println("Sprite is null");
         } else {
@@ -33,8 +33,19 @@ public class BlueGrassSideModel implements BakedModel {
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, Random random) {
         System.out.println("Getting quads for " + state + " / " + face + " / " + random);
+        if (MinecraftClient.getInstance() == null || MinecraftClient.getInstance().getBakedModelManager() == null) {
+            System.out.println("MinecraftClient or BakedModelManager is null");
+            return Collections.emptyList();
+        }
         BakedModel originalModel = MinecraftClient.getInstance().getBakedModelManager().getModel(new ModelIdentifier(new Identifier("minecraft", "grass_block"), ""));
+        if (originalModel == null) {
+            System.out.println("originalModel is null");
+            return Collections.emptyList();
+        }
         List<BakedQuad> quads = new ArrayList<>(originalModel.getQuads(state, face, random));
+        if (!quads.isEmpty()) {
+            System.out.println("Original vertex data length: " + quads.get(0).getVertexData().length);
+        }
         if (face == null || face == Direction.DOWN) {
             return originalModel.getQuads(state, face, random);
         }
@@ -60,11 +71,11 @@ public class BlueGrassSideModel implements BakedModel {
             quads.addAll(newQuads);
         } else if (face == Direction.NORTH || face == Direction.SOUTH || face == Direction.EAST || face == Direction.WEST) {
             int[] vertexData = new int[]{
-                    // {x, y, z, color, u, v, light}
-                    0, 0, 0, -1, 0, 16, 0,
-                    16, 0, 0, -1, 16, 16, 0,
-                    16, 16, 0, -1, 16, 0, 0,
-                    0, 16, 0, -1, 0, 0, 0
+                    // {x, y, z, color, u, v, light, normal}
+                    0, 0, 0, -1, 0, 16, 0, 0,
+                    16, 0, 0, -1, 16, 16, 0, 0,
+                    16, 16, 0, -1, 16, 0, 0, 0,
+                    0, 16, 0, -1, 0, 0, 0, 0
             };
             BakedQuad customQuad = new BakedQuad(vertexData, -1, face, sprite, true);
             quads.clear();
@@ -75,6 +86,11 @@ public class BlueGrassSideModel implements BakedModel {
             System.out.println("No quads generated for " + face);
         } else {
             System.out.println("Quads generated for " + face);
+        }
+        if (quads.isEmpty()) {
+            System.out.println("Custom vertex data is empty");
+        } else {
+            System.out.println("Custom vertex data length: " + quads.get(0).getVertexData().length);
         }
         return quads;
     }
