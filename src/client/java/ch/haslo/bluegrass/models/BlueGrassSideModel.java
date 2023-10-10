@@ -8,8 +8,6 @@ import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
@@ -25,13 +23,19 @@ public class BlueGrassSideModel implements BakedModel {
     public BlueGrassSideModel(Function<Identifier, Sprite> spriteGetter) {
         Identifier identifier = new Identifier("bluegrass", "block/grass_block_side");
         this.sprite = spriteGetter.apply(identifier);
+        if (this.sprite == null) {
+            System.out.println("Sprite is null");
+        } else {
+            System.out.println("Sprite loaded");
+        }
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, Random random) {
+        System.out.println("Getting quads for " + state + " / " + face + " / " + random);
         BakedModel originalModel = MinecraftClient.getInstance().getBakedModelManager().getModel(new ModelIdentifier(new Identifier("minecraft", "grass_block"), ""));
         List<BakedQuad> quads = new ArrayList<>(originalModel.getQuads(state, face, random));
-        if (face == null) {
+        if (face == null || face == Direction.DOWN) {
             return originalModel.getQuads(state, face, random);
         }
         if (face == Direction.UP) {
@@ -44,12 +48,10 @@ public class BlueGrassSideModel implements BakedModel {
                     int red = color >> 16 & 255;
                     int green = color >> 8 & 255;
                     int blue = color & 255;
-
-                    // Multiply to apply blue tint
                     blue = Math.min(255, blue * 2);  // Multiply blue component by 2, capped at 255
-
                     int newColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
                     vertexData[i + 3] = newColor;
+                    System.out.println("Blue tint applied to " + i);
                 }
                 BakedQuad newQuad = new BakedQuad(vertexData, -1, quad.getFace(), quad.getSprite(), quad.hasShade());
                 newQuads.add(newQuad);
@@ -69,6 +71,11 @@ public class BlueGrassSideModel implements BakedModel {
             quads.add(customQuad);
         }
         // south, noop
+        if (quads.isEmpty()) {
+            System.out.println("No quads generated for " + face);
+        } else {
+            System.out.println("Quads generated for " + face);
+        }
         return quads;
     }
 
