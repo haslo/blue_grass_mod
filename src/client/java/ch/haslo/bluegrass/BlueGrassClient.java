@@ -24,9 +24,6 @@ public class BlueGrassClient implements ClientModInitializer {
 
 					if (modelId.getNamespace().equals("minecraft") && modelId.getPath().equals("grass_block") && modelId.getVariant().equals("snowy=false")) {
 						System.out.println("Inside non-snowy grass block logic");
-						// Identifier blockAtlasId = new Identifier("minecraft", "textures/atlas/blocks.png");
-						// Function<Identifier, Sprite> spriteGetter = MinecraftClient.getInstance().getSpriteAtlas(blockAtlasId);
-						// BakedModel bakedModel = new BakedBlueGrassModel(spriteGetter);
 						return new UnbakedBlueGrassModel(modelId);
 					}
 				}

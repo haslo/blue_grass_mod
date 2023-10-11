@@ -12,6 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -42,6 +43,7 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
     @Nullable
     @Override
     public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
+        System.out.println("Baking grass block now");
         SpriteIdentifier topIdentifier = new SpriteIdentifier(
                 new Identifier("minecraft", "textures/atlas/blocks.png"),
                 new Identifier("minecraft", "block/grass_block_top")
@@ -59,6 +61,10 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
         Sprite sideSprite = textureGetter.apply(sideIdentifier);
         Sprite bottomSprite = textureGetter.apply(bottomIdentifier);
 
+        debugSprite(topSprite);
+        debugSprite(sideSprite);
+        debugSprite(bottomSprite);
+
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         MeshBuilder builder = renderer.meshBuilder();
         QuadEmitter emitter = builder.getEmitter();
@@ -69,20 +75,35 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
         return new BakedBlueGrassModel(new Sprite[]{topSprite, sideSprite, bottomSprite}, mesh);
     }
 
+    void debugSprite(Sprite sprite) {
+        if (sprite == null) {
+            System.out.println("Sprite is null");
+            return;
+        }
+        SpriteContents contents = sprite.getContents();
+        if (contents == null) {
+            System.out.println("Contents are null");
+            return;
+        } else {
+            System.out.println("Contents are " + contents);
+        }
+    }
+
     void emitQuadsForDirections(QuadEmitter emitter, Sprite topSprite, Sprite sideSprite, Sprite bottomSprite) {
         for (Direction direction : Direction.values()) {
             emitter.square(direction, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
             Sprite spriteToUse;
+            int color = 0xFFFFFFFF;
             if (direction == Direction.UP) {
                 spriteToUse = topSprite;
+                color = 0xFF0000FF;
             } else if (direction == Direction.DOWN) {
                 spriteToUse = bottomSprite;
             } else {
                 spriteToUse = sideSprite;
             }
             emitter.spriteBake(0, spriteToUse, MutableQuadView.BAKE_LOCK_UV);
-            emitter.spriteColor(0, -1, -1, -1, -1);
+            emitter.spriteColor(0, color, color, color, color);
             emitter.emit();
         }
-    }
-}
+    }}

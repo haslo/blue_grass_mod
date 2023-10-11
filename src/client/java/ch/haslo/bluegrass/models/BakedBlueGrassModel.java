@@ -94,35 +94,12 @@ public class BakedBlueGrassModel implements BakedModel, FabricBakedModel {
     }
 
     @Override
-    public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-        Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-        MeshBuilder builder = renderer.meshBuilder();
-        QuadEmitter emitter = builder.getEmitter();
-        emitQuadsForDirections(emitter);
+    public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos, Supplier<Random> supplier, RenderContext renderContext) {
+        renderContext.meshConsumer().accept(mesh);
     }
 
     @Override
     public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
-        Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-        MeshBuilder builder = renderer.meshBuilder();
-        QuadEmitter emitter = builder.getEmitter();
-        emitQuadsForDirections(emitter);
-    }
-
-    void emitQuadsForDirections(QuadEmitter emitter) {
-        for (Direction direction : Direction.values()) {
-            emitter.square(direction, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-            Sprite spriteToUse;
-            if (direction == Direction.UP) {
-                spriteToUse = this.sprites[0];
-            } else if (direction == Direction.DOWN) {
-                spriteToUse = this.sprites[2];
-            } else {
-                spriteToUse = this.sprites[1];
-            }
-            emitter.spriteBake(0, spriteToUse, MutableQuadView.BAKE_LOCK_UV);
-            emitter.spriteColor(0, -1, -1, -1, -1);
-            emitter.emit();
-        }
+        // noop
     }
 }
