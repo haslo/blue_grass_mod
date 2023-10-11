@@ -94,8 +94,10 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
             } else {
                 spriteToUse = sideSprite;
             }
-            emitter.spriteBake(0, spriteToUse, MutableQuadView.BAKE_LOCK_UV);
-            emitter.spriteColor(0, color, color, color, color);
+            emitter.spriteBake(spriteToUse, QuadEmitter.BAKE_LOCK_UV);
+            for (int i = 0; i < 4; i++) {
+                emitter.color(i, color);
+            }
             emitter.emit();
         }
     }

@@ -1,5 +1,6 @@
 package ch.haslo.bluegrass.models;
 
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
@@ -86,7 +87,8 @@ public class BakedBlueGrassModel implements BakedModel, FabricBakedModel {
 
     @Override
     public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos, Supplier<Random> supplier, RenderContext renderContext) {
-        renderContext.meshConsumer().accept(mesh);
+        QuadEmitter emitter = renderContext.getEmitter();
+        mesh.outputTo(emitter);
     }
 
     @Override
