@@ -3,21 +3,18 @@
   "id": "bluegrass",
   "version": "${version}",
   "name": "BlueGrass",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Makes the grass blue. No biomes integration (yet).",
   "authors": [
-    "Me!"
+    "haslo"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://haslo.ch/",
+    "sources": "https://github.com/haslo/blue_grass_mod"
   },
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/bluegrass/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "ch.haslo.bluegrass.BlueGrass"
-    ],
     "client": [
       "ch.haslo.bluegrass.BlueGrassClient"
     ]

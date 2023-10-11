@@ -1,3 +1,12 @@
+/*
+ * Copyright © 2023 haslo <haslo@haslo.ch>
+ *
+ * This file is part of BlueGrass.
+ *
+ * Licensed under the MIT license. For more information,
+ * see the LICENSE file.
+ */
+
 package ch.haslo.bluegrass.models;
 
 import net.fabricmc.api.EnvType;
@@ -6,7 +15,6 @@ import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.texture.Sprite;

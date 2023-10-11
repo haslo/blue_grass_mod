@@ -1,3 +1,12 @@
+/*
+ * Copyright © 2023 haslo <haslo@haslo.ch>
+ *
+ * This file is part of BlueGrass.
+ *
+ * Licensed under the MIT license. For more information,
+ * see the LICENSE file.
+ */
+
 package ch.haslo.bluegrass.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
