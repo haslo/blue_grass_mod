@@ -8,10 +8,8 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
@@ -24,12 +22,6 @@ import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public class UnbakedBlueGrassModel implements UnbakedModel {
-    private final Identifier textureId;
-
-    public UnbakedBlueGrassModel(Identifier textureId) {
-        this.textureId = textureId;
-    }
-
     @Override
     public Collection<Identifier> getModelDependencies() {
         return Collections.emptyList();
@@ -66,6 +58,7 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
         debugSprite(bottomSprite);
 
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+        assert renderer != null;
         MeshBuilder builder = renderer.meshBuilder();
         QuadEmitter emitter = builder.getEmitter();
 
@@ -83,7 +76,6 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
         SpriteContents contents = sprite.getContents();
         if (contents == null) {
             System.out.println("Contents are null");
-            return;
         } else {
             System.out.println("Contents are " + contents);
         }
@@ -106,4 +98,5 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
             emitter.spriteColor(0, color, color, color, color);
             emitter.emit();
         }
-    }}
+    }
+}
