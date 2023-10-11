@@ -1,92 +1,56 @@
 package ch.haslo.bluegrass.models;
 
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.Sprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.BlockRenderView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class BakedBlueGrassModel implements BakedModel {
-    private final Sprite sprite;
+public class BakedBlueGrassModel implements BakedModel, FabricBakedModel {
+    private final Sprite[] sprites;
+    private final Mesh mesh;
 
-    public BakedBlueGrassModel(Sprite sprite) {
-        this.sprite = sprite;
-        if (this.sprite == null) {
-            System.out.println("Sprite is null");
+    public BakedBlueGrassModel(Sprite[] sprites, Mesh mesh) {
+        this.sprites = sprites;
+        if (this.sprites == null) {
+            System.out.println("Sprites is null");
         } else {
-            System.out.println("Sprite loaded");
+            System.out.println("Sprites loaded");
+        }
+        this.mesh = mesh;
+        if (this.mesh == null) {
+            System.out.println("Mesh is null");
+        } else {
+            System.out.println("Mesh loaded");
         }
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, Random random) {
-        System.out.println("Getting quads for " + state + " / " + face + " / " + random);
-        if (MinecraftClient.getInstance() == null || MinecraftClient.getInstance().getBakedModelManager() == null) {
-            System.out.println("MinecraftClient or BakedModelManager is null");
-            return Collections.emptyList();
-        }
-        BakedModel originalModel = MinecraftClient.getInstance().getBakedModelManager().getModel(new ModelIdentifier(new Identifier("minecraft", "grass_block"), ""));
-        if (originalModel == null) {
-            System.out.println("originalModel is null");
-            return Collections.emptyList();
-        }
-        List<BakedQuad> quads = new ArrayList<>(originalModel.getQuads(state, face, random));
-        // if (!quads.isEmpty()) {
-        //     System.out.println("Original vertex data length: " + quads.get(0).getVertexData().length);
-        // }
-        if (face == null || face == Direction.DOWN) {
-            return originalModel.getQuads(state, face, random);
-        }
-        if (face == Direction.UP) {
-            List<BakedQuad> newQuads = new ArrayList<>();
-            for (BakedQuad quad : quads) {
-                int[] vertexData = quad.getVertexData().clone();  // Clone to avoid modifying the original
-                for (int i = 0; i < vertexData.length; i += 8) {  // 8 integers per vertex
-                    int color = vertexData[i + 3];
-                    int alpha = color >> 24 & 255;
-                    int red = color >> 16 & 255;
-                    int green = color >> 8 & 255;
-                    int blue = color & 255;
-                    blue = Math.min(255, blue * 2);  // Multiply blue component by 2, capped at 255
-                    int newColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
-                    vertexData[i + 3] = newColor;
-                    // System.out.println("Blue tint applied to " + i);
-                }
-                BakedQuad newQuad = new BakedQuad(vertexData, -1, quad.getFace(), quad.getSprite(), quad.hasShade());
-                newQuads.add(newQuad);
-            }
-            quads.clear();
-            quads.addAll(newQuads);
-        } else if (face == Direction.NORTH || face == Direction.SOUTH || face == Direction.EAST || face == Direction.WEST) {
-            int[] vertexData = new int[]{
-                    // {x, y, z, color, u, v, light, normal}
-                    0, 0, 0, -1, 0, 16, 0, 0,
-                    16, 0, 0, -1, 16, 16, 0, 0,
-                    16, 16, 0, -1, 16, 0, 0, 0,
-                    0, 16, 0, -1, 0, 0, 0, 0
-            };
-            BakedQuad customQuad = new BakedQuad(vertexData, -1, face, sprite, true);
-            quads.clear();
-            quads.add(customQuad);
-        }
-        if (quads.isEmpty()) {
-            System.out.println("Custom vertex data is empty");
-        }
-        // else {
-        //     System.out.println("Custom vertex data length: " + quads.get(0).getVertexData().length);
-        // }
-        return quads;
+        return Collections.emptyList();
     }
 
     @Override
@@ -111,7 +75,7 @@ public class BakedBlueGrassModel implements BakedModel {
 
     @Override
     public Sprite getParticleSprite() {
-        return sprite;
+        return this.sprites[0];
     }
 
     @Override
@@ -122,5 +86,43 @@ public class BakedBlueGrassModel implements BakedModel {
     @Override
     public ModelOverrideList getOverrides() {
         return ModelOverrideList.EMPTY;
+    }
+
+    @Override
+    public boolean isVanillaAdapter() {
+        return false;
+    }
+
+    @Override
+    public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+        Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+        MeshBuilder builder = renderer.meshBuilder();
+        QuadEmitter emitter = builder.getEmitter();
+        emitQuadsForDirections(emitter);
+    }
+
+    @Override
+    public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
+        Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+        MeshBuilder builder = renderer.meshBuilder();
+        QuadEmitter emitter = builder.getEmitter();
+        emitQuadsForDirections(emitter);
+    }
+
+    void emitQuadsForDirections(QuadEmitter emitter) {
+        for (Direction direction : Direction.values()) {
+            emitter.square(direction, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+            Sprite spriteToUse;
+            if (direction == Direction.UP) {
+                spriteToUse = this.sprites[0];
+            } else if (direction == Direction.DOWN) {
+                spriteToUse = this.sprites[2];
+            } else {
+                spriteToUse = this.sprites[1];
+            }
+            emitter.spriteBake(0, spriteToUse, MutableQuadView.BAKE_LOCK_UV);
+            emitter.spriteColor(0, -1, -1, -1, -1);
+            emitter.emit();
+        }
     }
 }
