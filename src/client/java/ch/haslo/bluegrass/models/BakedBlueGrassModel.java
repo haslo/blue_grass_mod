@@ -9,11 +9,14 @@
 
 package ch.haslo.bluegrass.models;
 
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
@@ -37,20 +40,13 @@ import java.util.function.Supplier;
 
 public class BakedBlueGrassModel implements BakedModel, FabricBakedModel {
     private final Sprite[] sprites;
-    private final Mesh mesh;
 
-    public BakedBlueGrassModel(Sprite[] sprites, Mesh mesh) {
+    public BakedBlueGrassModel(Sprite[] sprites) {
         this.sprites = sprites;
         if (this.sprites == null) {
             System.out.println("Sprites is null");
         } else {
             System.out.println("Sprites loaded");
-        }
-        this.mesh = mesh;
-        if (this.mesh == null) {
-            System.out.println("Mesh is null");
-        } else {
-            System.out.println("Mesh loaded");
         }
     }
 
@@ -102,7 +98,26 @@ public class BakedBlueGrassModel implements BakedModel, FabricBakedModel {
     @Override
     public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos, Supplier<Random> supplier, RenderContext renderContext) {
         QuadEmitter emitter = renderContext.getEmitter();
-        mesh.outputTo(emitter);
+        BlockColorProvider colorProvider = ColorProviderRegistry.BLOCK.get(Blocks.GRASS);
+        assert colorProvider != null;
+        for (Direction direction : Direction.values()) {
+            emitter.square(direction, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+            Sprite spriteToUse;
+            int color = 0xFFFFFFFF;
+            if (direction == Direction.UP) {
+                spriteToUse = this.sprites[0];
+                color = colorProvider.getColor(blockState, blockRenderView, blockPos, 0);
+            } else if (direction == Direction.DOWN) {
+                spriteToUse = this.sprites[2];
+            } else {
+                spriteToUse = this.sprites[1];
+            }
+            for (int i = 0; i < 4; i++) {
+                emitter.color(i, color);
+            }
+            emitter.spriteBake(spriteToUse, QuadEmitter.BAKE_LOCK_UV);
+            emitter.emit();
+        }
     }
 
     @Override

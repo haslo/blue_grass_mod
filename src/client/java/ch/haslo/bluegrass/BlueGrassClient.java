@@ -69,7 +69,10 @@ public class BlueGrassClient implements ClientModInitializer {
                     totalBlue += grassColor & 255;
                 }
             }
-            int color = 0xFF000000 | (totalRed / 9 & 255) << 16 | (totalGreen / 9 & 255) << 8 | totalBlue / 9 & 255;
+            // int color = 0xFF000000 | (totalRed / 9 & 255) << 16 | (totalGreen / 9 & 255) << 8 | totalBlue / 9 & 255;
+            // int scaledGreen = (int) Math.round((totalGreen / 9.0) * ((float)0xFF / (float)0xA0));
+            // scaledGreen = Math.min(0xFF, Math.max(0x00, scaledGreen));
+            int color = 0xFF000000 | (totalRed / 9 & 255) << 16 | (totalBlue / 9 & 255) << 8 | totalGreen / 9 & 255;
             System.out.println("returning: 0x" + Integer.toHexString(color));
             return color;
         }

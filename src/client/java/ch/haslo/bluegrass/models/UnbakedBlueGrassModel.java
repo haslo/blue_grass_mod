@@ -72,15 +72,7 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
         debugSprite(sideSprite);
         debugSprite(bottomSprite);
 
-        Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-        assert renderer != null;
-        MeshBuilder builder = renderer.meshBuilder();
-        QuadEmitter emitter = builder.getEmitter();
-
-        emitQuadsForDirections(emitter, topSprite, sideSprite, bottomSprite);
-
-        Mesh mesh = builder.build();
-        return new BakedBlueGrassModel(new Sprite[]{topSprite, sideSprite, bottomSprite}, mesh);
+        return new BakedBlueGrassModel(new Sprite[]{topSprite, sideSprite, bottomSprite});
     }
 
     void debugSprite(Sprite sprite) {
