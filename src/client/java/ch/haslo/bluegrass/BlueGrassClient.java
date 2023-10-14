@@ -50,30 +50,42 @@ public class BlueGrassClient implements ClientModInitializer {
     private static class GrassColorProvider implements BlockColorProvider {
         @Override
         public int getColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos blockPos, int tintIndex) {
-            System.out.println("Getting color somewhere (sorry about the spam)");
+            // System.out.println("Getting color somewhere (sorry about the spam)");
             assert blockPos != null;
             World minecraftWorld = MinecraftClient.getInstance().world;
             assert minecraftWorld != null;
             int totalRed = 0;
             int totalGreen = 0;
             int totalBlue = 0;
-            System.out.println("Getting color values");
+            // System.out.println("Getting color values");
             for (int xOffset = -1; xOffset <= 1; ++xOffset) {
                 for (int zOffset = -1; zOffset <= 1; ++zOffset) {
                     RegistryEntry<Biome> registryEntry = minecraftWorld.getBiome(blockPos.add(xOffset, 0, zOffset));
                     Biome biome = registryEntry.value();
                     int grassColor = biome.getGrassColorAt(blockPos.getX() + xOffset, blockPos.getZ() + zOffset);
-                    System.out.println("Grass Color: 0x" + Integer.toHexString(grassColor));
+                    // System.out.println("Grass Color: 0x" + Integer.toHexString(grassColor));
                     totalRed += (grassColor & 16711680) >> 16;
                     totalGreen += (grassColor & 65280) >> 8;
                     totalBlue += grassColor & 255;
                 }
             }
-            // int color = 0xFF000000 | (totalRed / 9 & 255) << 16 | (totalGreen / 9 & 255) << 8 | totalBlue / 9 & 255;
-            // int scaledGreen = (int) Math.round((totalGreen / 9.0) * ((float)0xFF / (float)0xA0));
-            // scaledGreen = Math.min(0xFF, Math.max(0x00, scaledGreen));
-            int color = 0xFF000000 | (totalRed / 9 & 255) << 16 | (totalBlue / 9 & 255) << 8 | totalGreen / 9 & 255;
-            System.out.println("returning: 0x" + Integer.toHexString(color));
+            int averageRed = totalRed / 9;
+            int averageGreen = totalGreen / 9;
+            int averageBlue = totalBlue / 9;
+            int scaledRed = Math.min(255, (int) (averageRed / 1.5));
+            int scaledBlue = Math.min(255, (int) (averageGreen * 1.5));
+            int scaledGreen = Math.min(255, (int) (averageBlue / 1.5));
+            // System.out.println("Color values RGB average: " +
+            //         averageRed + "," +
+            //         averageGreen + "," +
+            //         averageBlue + "" +
+            //         ", RGB scaled: " +
+            //         scaledRed + "," +
+            //         scaledGreen + "," +
+            //         scaledBlue
+            // );
+            int color = 0xFF000000 | scaledRed << 16 | scaledGreen << 8 | scaledBlue;
+            // System.out.println("returning: 0x" + Integer.toHexString(color));
             return color;
         }
     }
