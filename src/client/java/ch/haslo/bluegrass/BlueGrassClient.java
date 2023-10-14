@@ -14,17 +14,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import org.jetbrains.annotations.Nullable;
 
 public class BlueGrassClient implements ClientModInitializer {
     @Override
@@ -42,51 +33,9 @@ public class BlueGrassClient implements ClientModInitializer {
             return model;
         }));
         System.out.println("Registering ColorProviderRegistry");
-        ColorProviderRegistry.BLOCK.register(new GrassColorProvider(), Blocks.GRASS_BLOCK);
-        ColorProviderRegistry.BLOCK.register(new GrassColorProvider(), Blocks.GRASS);
+        ColorProviderRegistry.BLOCK.register(new BlueGrassColorProvider(), Blocks.GRASS_BLOCK);
+        ColorProviderRegistry.BLOCK.register(new BlueGrassColorProvider(), Blocks.GRASS);
+        ColorProviderRegistry.BLOCK.register(new BlueGrassColorProvider(), Blocks.TALL_GRASS);
         System.out.println("BlueGrassClient initialized");
-    }
-
-    private static class GrassColorProvider implements BlockColorProvider {
-        @Override
-        public int getColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos blockPos, int tintIndex) {
-            // System.out.println("Getting color somewhere (sorry about the spam)");
-            assert blockPos != null;
-            World minecraftWorld = MinecraftClient.getInstance().world;
-            assert minecraftWorld != null;
-            int totalRed = 0;
-            int totalGreen = 0;
-            int totalBlue = 0;
-            // System.out.println("Getting color values");
-            for (int xOffset = -1; xOffset <= 1; ++xOffset) {
-                for (int zOffset = -1; zOffset <= 1; ++zOffset) {
-                    RegistryEntry<Biome> registryEntry = minecraftWorld.getBiome(blockPos.add(xOffset, 0, zOffset));
-                    Biome biome = registryEntry.value();
-                    int grassColor = biome.getGrassColorAt(blockPos.getX() + xOffset, blockPos.getZ() + zOffset);
-                    // System.out.println("Grass Color: 0x" + Integer.toHexString(grassColor));
-                    totalRed += (grassColor & 16711680) >> 16;
-                    totalGreen += (grassColor & 65280) >> 8;
-                    totalBlue += grassColor & 255;
-                }
-            }
-            int averageRed = totalRed / 9;
-            int averageGreen = totalGreen / 9;
-            int averageBlue = totalBlue / 9;
-            int scaledRed = Math.min(255, (int) (averageRed / 1.5));
-            int scaledBlue = Math.min(255, (int) (averageGreen * 1.5));
-            int scaledGreen = Math.min(255, (int) (averageBlue / 1.5));
-            // System.out.println("Color values RGB average: " +
-            //         averageRed + "," +
-            //         averageGreen + "," +
-            //         averageBlue + "" +
-            //         ", RGB scaled: " +
-            //         scaledRed + "," +
-            //         scaledGreen + "," +
-            //         scaledBlue
-            // );
-            int color = 0xFF000000 | scaledRed << 16 | scaledGreen << 8 | scaledBlue;
-            // System.out.println("returning: 0x" + Integer.toHexString(color));
-            return color;
-        }
     }
 }
