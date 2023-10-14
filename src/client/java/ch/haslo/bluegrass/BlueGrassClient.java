@@ -17,28 +17,32 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ModelIdentifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BlueGrassClient implements ClientModInitializer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public void onInitializeClient() {
-        System.out.println("BlueGrassClient initializing");
-        System.out.println("Registering ModelLoadingPlugin");
+        LOGGER.info("BlueGrassClient initializing");
+        LOGGER.info("Registering ModelLoadingPlugin");
         ModelLoadingPlugin.register(pluginCtx -> pluginCtx.modifyModelOnLoad().register(ModelModifier.WRAP_PHASE, (model, context) -> {
             if (context.id() instanceof ModelIdentifier modelId) {
                 if (modelId.getNamespace().equals("minecraft") && modelId.getPath().equals("grass_block") && modelId.getVariant().equals("snowy=false")) {
-                    System.out.println("Model ID: " + modelId);
-                    System.out.println("Inside non-snowy grass block logic");
+                    LOGGER.info("Model ID: " + modelId);
+                    LOGGER.info("Inside non-snowy grass block logic");
                     return new UnbakedBlueGrassModel();
                 }
             }
             return model;
         }));
-        System.out.println("Registering ColorProviderRegistry");
+        LOGGER.info("Registering ColorProviderRegistry");
         BlueGrassColorProvider blueGrassColorProvider = new BlueGrassColorProvider();
         Block[] blocksToRegister = {Blocks.GRASS_BLOCK, Blocks.GRASS, Blocks.TALL_GRASS};
         for (Block block : blocksToRegister) {
             ColorProviderRegistry.BLOCK.register(blueGrassColorProvider, block);
         }
-        System.out.println("BlueGrassClient initialized");
+        LOGGER.info("BlueGrassClient initialized");
     }
 }

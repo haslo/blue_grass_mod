@@ -13,9 +13,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.block.BlockColorProvider;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.block.BlockState;
@@ -24,29 +22,27 @@ import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BakedBlueGrassModel implements BakedModel, FabricBakedModel {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Sprite[] sprites;
 
     public BakedBlueGrassModel(Sprite[] sprites) {
         this.sprites = sprites;
         if (this.sprites == null) {
-            System.out.println("Sprites is null");
+            LOGGER.warn("Sprites is null");
         } else {
-            System.out.println("Sprites loaded");
+            LOGGER.info("Sprites loaded");
         }
     }
 

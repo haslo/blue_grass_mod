@@ -11,32 +11,23 @@ package ch.haslo.bluegrass.models;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockRenderView;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class UnbakedBlueGrassModel implements UnbakedModel {
+    private static final Logger LOGGER = LogManager.getLogger();
     @Override
     public Collection<Identifier> getModelDependencies() {
         return Collections.emptyList();
@@ -50,7 +41,7 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
     @Nullable
     @Override
     public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-        System.out.println("Baking grass block now");
+        LOGGER.info("Baking grass block now");
         Sprite topSprite = getSprite(textureGetter, "textures/atlas/blocks.png", "minecraft", "block/grass_block_top");
         Sprite sideSprite = getSprite(textureGetter, "textures/atlas/blocks.png", "bluegrass", "block/grass_block_side");
         Sprite bottomSprite = getSprite(textureGetter, "textures/atlas/blocks.png", "minecraft", "block/dirt");
@@ -69,14 +60,14 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
 
     void debugSprite(Sprite sprite) {
         if (sprite == null) {
-            System.out.println("Sprite is null");
+            LOGGER.warn("Sprite is null");
             return;
         }
         SpriteContents contents = sprite.getContents();
         if (contents == null) {
-            System.out.println("Contents are null");
+            LOGGER.warn("Contents are null");
         } else {
-            System.out.println("Contents are " + contents);
+            LOGGER.info("Contents are " + contents);
         }
     }
 
