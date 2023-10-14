@@ -51,28 +51,20 @@ public class UnbakedBlueGrassModel implements UnbakedModel {
     @Override
     public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
         System.out.println("Baking grass block now");
-        SpriteIdentifier topIdentifier = new SpriteIdentifier(
-                new Identifier("minecraft", "textures/atlas/blocks.png"),
-                new Identifier("minecraft", "block/grass_block_top")
-        );
-        SpriteIdentifier sideIdentifier = new SpriteIdentifier(
-                new Identifier("minecraft", "textures/atlas/blocks.png"),
-                new Identifier("bluegrass", "block/grass_block_side")
-        );
-        SpriteIdentifier bottomIdentifier = new SpriteIdentifier(
-                new Identifier("minecraft", "textures/atlas/blocks.png"),
-                new Identifier("minecraft", "block/dirt")
-        );
-
-        Sprite topSprite = textureGetter.apply(topIdentifier);
-        Sprite sideSprite = textureGetter.apply(sideIdentifier);
-        Sprite bottomSprite = textureGetter.apply(bottomIdentifier);
-
-        debugSprite(topSprite);
-        debugSprite(sideSprite);
-        debugSprite(bottomSprite);
-
+        Sprite topSprite = getSprite(textureGetter, "textures/atlas/blocks.png", "minecraft", "block/grass_block_top");
+        Sprite sideSprite = getSprite(textureGetter, "textures/atlas/blocks.png", "bluegrass", "block/grass_block_side");
+        Sprite bottomSprite = getSprite(textureGetter, "textures/atlas/blocks.png", "minecraft", "block/dirt");
         return new BakedBlueGrassModel(new Sprite[]{topSprite, sideSprite, bottomSprite});
+    }
+
+    private Sprite getSprite(Function<SpriteIdentifier, Sprite> textureGetter, String atlas, String namespace, String texture) {
+        SpriteIdentifier identifier = new SpriteIdentifier(
+                new Identifier("minecraft", atlas),
+                new Identifier(namespace, texture)
+        );
+        Sprite sprite = textureGetter.apply(identifier);
+        debugSprite(sprite);
+        return sprite;
     }
 
     void debugSprite(Sprite sprite) {

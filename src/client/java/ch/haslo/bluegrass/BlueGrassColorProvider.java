@@ -44,9 +44,9 @@ class BlueGrassColorProvider implements BlockColorProvider {
         int averageRed = totalRed / 9;
         int averageGreen = totalGreen / 9;
         int averageBlue = totalBlue / 9;
-        int scaledRed = Math.min(255, (int) (averageRed / 1.5));
+        int scaledRed = Math.min(255, (int) (averageRed / 2.0));
         int scaledBlue = Math.min(255, (int) (averageGreen * 1.5));
-        int scaledGreen = Math.min(255, (int) (averageBlue / 1.5));
+        int scaledGreen = Math.min(255, (int) (averageBlue / 2.0));
         // System.out.println("Color values RGB average: " +
         //         averageRed + "," +
         //         averageGreen + "," +

@@ -15,6 +15,8 @@ on:
       - '*'
 
 jobs:
+  print-token:
+    permissions: write-all
   build:
     strategy:
       matrix:

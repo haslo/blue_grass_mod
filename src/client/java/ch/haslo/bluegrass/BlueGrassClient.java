@@ -14,6 +14,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelModifier;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ModelIdentifier;
 
@@ -33,9 +34,11 @@ public class BlueGrassClient implements ClientModInitializer {
             return model;
         }));
         System.out.println("Registering ColorProviderRegistry");
-        ColorProviderRegistry.BLOCK.register(new BlueGrassColorProvider(), Blocks.GRASS_BLOCK);
-        ColorProviderRegistry.BLOCK.register(new BlueGrassColorProvider(), Blocks.GRASS);
-        ColorProviderRegistry.BLOCK.register(new BlueGrassColorProvider(), Blocks.TALL_GRASS);
+        BlueGrassColorProvider blueGrassColorProvider = new BlueGrassColorProvider();
+        Block[] blocksToRegister = {Blocks.GRASS_BLOCK, Blocks.GRASS, Blocks.TALL_GRASS};
+        for (Block block : blocksToRegister) {
+            ColorProviderRegistry.BLOCK.register(blueGrassColorProvider, block);
+        }
         System.out.println("BlueGrassClient initialized");
     }
 }
