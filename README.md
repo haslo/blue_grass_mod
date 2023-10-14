@@ -99,6 +99,11 @@ gradlew.bat build
 gradlew.bat runClient
 ```
 
+## Version History
+
+* **1.0.0** Initial Release
+* **1.1.0** Color provider for biome colors, also blueified tufts of grass
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
