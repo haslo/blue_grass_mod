@@ -103,6 +103,7 @@ gradlew.bat runClient
 
 * **1.0.0** Initial Release
 * **1.1.0** Color provider for biome colors, also blueified tufts of grass
+* **1.1.2** Refactoring and cleanup
 
 ## License
 
